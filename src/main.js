@@ -1,18 +1,20 @@
-const { invoke } = window.__TAURI__.core;
+async function makeSound() {
+  const audioContext = new AudioContext();
 
-let greetInputEl;
-let greetMsgEl;
+  const gain = new GainNode(audioContext);
+  gain.connect(audioContext.destination);
+  gain.gain.value = 0.1;
 
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-  greetMsgEl.textContent = await invoke("greet", { name: greetInputEl.value });
+  const oscillator = new OscillatorNode(audioContext);
+  oscillator.connect(gain);
+  oscillator.frequency.value = 440;
+  oscillator.start();
+  oscillator.stop(1);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form").addEventListener("submit", (e) => {
+  document.querySelector("#sound-button").addEventListener("click", (e) => {
     e.preventDefault();
-    greet();
+    makeSound();
   });
 });
